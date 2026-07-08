@@ -1,0 +1,9 @@
+[test]
+pathIgnorePatterns = [
+  "references/**",
+  "docs/**",
+  ".tmp/**",
+]
+
+[test.reporter]
+dots = true

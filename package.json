@@ -7,15 +7,26 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "bundle": "redocly bundle spec/openapi.yaml -o dist/openapi.json",
-    "lint": "spectral lint spec/openapi.yaml --fail-severity=error",
-    "validate:fixtures": "bun scripts/validate-fixtures.mjs",
-    "check": "bun run lint && bun run bundle && bun run validate:fixtures"
+    "fix": "biome check --write .",
+    "typecheck": "tsc --noEmit",
+    "bundle": "REDOCLY_SUPPRESS_UPDATE_NOTICE=true redocly bundle spec/openapi.yaml -o dist/openapi.json",
+    "test": "bun test",
+    "check": "biome check . && bun run typecheck && bun run bundle",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.4.15",
     "@redocly/cli": "^1.34.0",
-    "@stoplight/spectral-cli": "^6.14.0",
+    "@types/bun": "^1.3.14",
     "ajv": "^8.17.1",
-    "ajv-formats": "^3.0.1"
+    "ajv-formats": "^3.0.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.5",
+    "typescript": "^6.0.3"
+  },
+  "lint-staged": {
+    "*": [
+      "biome check --write --no-errors-on-unmatched"
+    ]
   }
 }

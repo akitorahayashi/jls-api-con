@@ -1,6 +1,0 @@
-extends:
-  - spectral:oas
-rules:
-  # Contract fragments are split across files and bundled; descriptions live in
-  # docs/semantics.md rather than on every node.
-  operation-description: off

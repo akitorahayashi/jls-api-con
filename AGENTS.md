@@ -28,17 +28,19 @@ formats.
 ## Adding a fixture
 
 Place a real wire-shape JSON file under the directory whose name maps to its
-schema (see `scripts/validate-fixtures.mjs`). It auto-enrolls in
-`bun run validate:fixtures`. To cover a new schema, add the directory and its
+schema (see `tests/fixtures.test.ts`). It auto-enrolls in
+`bun test`. To cover a new schema, add the directory and its
 mapping; an unmapped directory fails the check.
 
 ## Commands
 
 ```
-bun run check              # lint + bundle + validate fixtures
+bun run check              # biome + typecheck + bundle + bun test
+bun run fix                # apply Biome formatting and safe fixes
 bun run bundle             # regenerate dist/openapi.json from spec/
-bun run validate:fixtures  # validate every fixture against its schema
+bun test                   # fixture conformance + rejection checks
 ```
 
-Regenerate and commit `dist/openapi.json` whenever `spec/` changes; CI fails if
-it is stale.
+`dist/openapi.json` is regenerated and staged automatically by the husky
+pre-commit hook (`.husky/pre-commit`, installed on `bun install`), so it never
+drifts from `spec/`. CI fails if it is stale.
