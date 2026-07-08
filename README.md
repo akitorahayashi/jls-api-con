@@ -1,9 +1,8 @@
 # jls-api-con
 
-Single-source-of-truth wire contract for the Jules API REST v1alpha. Consumer
-repositories (`jls-api-rs`, `jules-action`, and future clients) pin this
-repository as a submodule and detect contract drift at their own compile time
-and test time.
+OpenAPI 3.1 wire contract for the Jules API REST v1alpha. This repository is the
+authoritative source of the wire shape; a client that adopts it detects contract
+drift at its own compile time and test time.
 
 ## Layout
 
@@ -42,7 +41,7 @@ code generation in consumers and fixture validation here.
 
 ```
 bun install
-bun run check      # biome + typecheck + bundle + bun test
+bun run check      # biome + typecheck
 bun run fix        # apply Biome formatting and safe fixes
 ```
 
@@ -51,9 +50,9 @@ Individual steps: `bun run typecheck`, `bun run bundle`, `bun test`. Biome
 generated `dist/` are outside its scope.
 
 `bun install` installs a husky pre-commit hook (`.husky/pre-commit`) that runs
-`lint-staged` (Biome on staged files), regenerates `dist/openapi.json`, and
-stages it. The committed bundle therefore never drifts from source; CI's
-staleness check is the backstop.
+`bun run check`, regenerates `dist/openapi.json`, and stages it. The
+committed bundle therefore never drifts from source; CI's staleness check is
+the backstop.
 
 ## Fixtures
 
