@@ -27,4 +27,4 @@ jobs:
         run: bun run check
 
       - name: Verify dist is committed
-        run: git diff --exit-status dist/openapi.json
+        run: git diff --exit-code dist/openapi.json
