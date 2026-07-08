@@ -2,14 +2,19 @@
 
 Prompt:
   type: string
-  minLength: 1
-  description: Session prompt text. Non-empty after trimming (see docs/semantics.md).
+  pattern: '\S'
+  description: >-
+    Session prompt text. Must contain a non-whitespace character, mirroring the
+    reference constraint that the prompt is non-empty after trimming (see
+    docs/semantics.md).
 
 Title:
   type: string
-  minLength: 1
+  pattern: '\S'
   maxLength: 255
-  description: Optional session title. Non-empty after trimming, at most 255 characters.
+  description: >-
+    Optional session title. Must contain a non-whitespace character (non-empty
+    after trimming) and be at most 255 characters.
 
 StartingBranch:
   type: string
@@ -131,8 +136,7 @@ SendMessageRequest:
   additionalProperties: true
   properties:
     prompt:
-      type: string
-      minLength: 1
+      $ref: '#/Prompt'
 
 Session:
   type: object

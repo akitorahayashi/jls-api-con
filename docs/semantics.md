@@ -106,6 +106,17 @@ Both shapes carry the same `GitHubRepo`. Exactly one shape is present; a
 response carrying both is rejected. The live shape exists because current live
 responses have been observed without the intermediate `source` wrapper.
 
+### The `sources.get` path
+
+The full resource name is `sources/{source}` and is multi-segment
+(`sources/**`), for example `sources/github/owner/repo`. On the wire the source
+segment's slashes are literal path separators: the request path is
+`/v1alpha/sources/github/owner/repo`, never
+`/v1alpha/sources/github%2Fowner%2Frepo`. A generated client that percent-encodes
+path parameters must special-case this operation and build the path from the
+full source name without encoding the slashes. This is the one operation whose
+path cannot be produced by a naive single-segment path-parameter serializer.
+
 ## Activities
 
 `Activity` carries common fields plus exactly one flattened event variant:
@@ -118,9 +129,11 @@ consumer forward-compatibility concern (see above).
 `system`) and is intentionally not enumerated.
 
 `Artifact` is a flattened union with exactly one variant per item: `changeSet`,
-`media`, `bashOutput`. `ChangeSet.changes` currently has the single `gitPatch`
-variant; `ChangeSet.source` is optional and may be absent or carry an unusual
-value such as `sources/github/` on repo-less output.
+`media`, `bashOutput`. The `ChangeSet` change union has the single `gitPatch`
+variant, flattened directly onto `changeSet`; the wire shape is
+`changeSet.gitPatch`, not a nested `changes` object. `ChangeSet.source` is
+optional and may be absent or carry an unusual value such as `sources/github/`
+on repo-less output.
 
 ## Pagination
 

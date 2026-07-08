@@ -201,13 +201,21 @@ paths:
       tags: [sources]
       summary: Get a source.
       description: >-
-        The source path parameter is multi-segment (resource pattern sources/**),
-        for example github/owner/repo, and its slashes are not percent-encoded.
+        The full resource name is sources/{source}. The source path parameter is
+        multi-segment (resource pattern sources/**), for example
+        github/owner/repo. Its slashes are literal path separators and MUST NOT
+        be percent-encoded: the request path is /v1alpha/sources/github/owner/repo,
+        never /v1alpha/sources/github%2Fowner%2Frepo. A generated client that
+        URL-encodes path parameters must special-case this operation and build the
+        path from the full source name without encoding the slashes (see
+        docs/semantics.md).
       parameters:
         - name: source
           in: path
           required: true
-          description: Multi-segment source id following sources/.
+          description: >-
+            Multi-segment source id following sources/, with literal, unencoded
+            slashes.
           schema:
             type: string
       responses:

@@ -29,15 +29,15 @@ formats.
 
 Place a real wire-shape JSON file under the directory whose name maps to its
 schema (see `scripts/validate-fixtures.mjs`). It auto-enrolls in
-`npm run validate:fixtures`. To cover a new schema, add the directory and its
+`bun run validate:fixtures`. To cover a new schema, add the directory and its
 mapping; an unmapped directory fails the check.
 
 ## Commands
 
 ```
-npm run check              # lint + bundle + validate fixtures
-npm run bundle             # regenerate dist/openapi.json from spec/
-npm run validate:fixtures  # validate every fixture against its schema
+bun run check              # lint + bundle + validate fixtures
+bun run bundle             # regenerate dist/openapi.json from spec/
+bun run validate:fixtures  # validate every fixture against its schema
 ```
 
 Regenerate and commit `dist/openapi.json` whenever `spec/` changes; CI fails if

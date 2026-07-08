@@ -327,13 +327,13 @@
           "sources"
         ],
         "summary": "Get a source.",
-        "description": "The source path parameter is multi-segment (resource pattern sources/**), for example github/owner/repo, and its slashes are not percent-encoded.",
+        "description": "The full resource name is sources/{source}. The source path parameter is multi-segment (resource pattern sources/**), for example github/owner/repo. Its slashes are literal path separators and MUST NOT be percent-encoded: the request path is /v1alpha/sources/github/owner/repo, never /v1alpha/sources/github%2Fowner%2Frepo. A generated client that URL-encodes path parameters must special-case this operation and build the path from the full source name without encoding the slashes (see docs/semantics.md).",
         "parameters": [
           {
             "name": "source",
             "in": "path",
             "required": true,
-            "description": "Multi-segment source id following sources/.",
+            "description": "Multi-segment source id following sources/, with literal, unencoded slashes.",
             "schema": {
               "type": "string"
             }
@@ -500,8 +500,7 @@
         "additionalProperties": true,
         "properties": {
           "prompt": {
-            "type": "string",
-            "minLength": 1
+            "$ref": "#/components/schemas/Prompt"
           }
         }
       },
@@ -716,8 +715,8 @@
       },
       "Prompt": {
         "type": "string",
-        "minLength": 1,
-        "description": "Session prompt text. Non-empty after trimming (see docs/semantics.md)."
+        "pattern": "\\S",
+        "description": "Session prompt text. Must contain a non-whitespace character, mirroring the reference constraint that the prompt is non-empty after trimming (see docs/semantics.md)."
       },
       "SourceName": {
         "type": "string",
@@ -874,9 +873,9 @@
       },
       "Title": {
         "type": "string",
-        "minLength": 1,
+        "pattern": "\\S",
         "maxLength": 255,
-        "description": "Optional session title. Non-empty after trimming, at most 255 characters."
+        "description": "Optional session title. Must contain a non-whitespace character (non-empty after trimming) and be at most 255 characters."
       },
       "ActivityName": {
         "type": "string",

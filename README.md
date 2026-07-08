@@ -41,11 +41,11 @@ code generation in consumers and fixture validation here.
 ## Local checks
 
 ```
-npm install
-npm run check      # lint + bundle + validate fixtures
+bun install
+bun run check      # lint + bundle + validate fixtures
 ```
 
-Individual steps: `npm run lint`, `npm run bundle`, `npm run validate:fixtures`.
+Individual steps: `bun run lint`, `bun run bundle`, `bun run validate:fixtures`.
 
 ## Fixtures
 

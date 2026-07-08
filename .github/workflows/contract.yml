@@ -5,38 +5,40 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   check:
+    name: Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: npm
-      - run: npm ci
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Setup Development Environment
+        uses: ./.github/actions/setup
       - name: Lint
-        run: npm run lint
+        run: bun run lint
       - name: Bundle and verify dist is regenerated
         run: |
-          npm run bundle
+          bun run bundle
           git diff --exit-status dist/openapi.json
       - name: Validate fixtures
-        run: npm run validate:fixtures
+        run: bun run validate:fixtures
 
   breaking:
+    name: Breaking-change gate
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: npm
-      - run: npm ci
-      - run: npm run bundle
+      - name: Setup Development Environment
+        uses: ./.github/actions/setup
+      - name: Bundle current contract
+        run: bun run bundle
       - name: Install oasdiff
         run: curl -fsSL https://raw.githubusercontent.com/oasdiff/oasdiff/main/install.sh | sudo sh
       - name: Breaking-change check against base
