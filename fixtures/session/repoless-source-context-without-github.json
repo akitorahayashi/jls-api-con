@@ -1,0 +1,9 @@
+{
+  "name": "sessions/repoless-2",
+  "id": "repoless-2",
+  "prompt": "Generate an example file",
+  "sourceContext": {
+    "source": "sources/github/o/r"
+  },
+  "state": "PLANNING"
+}

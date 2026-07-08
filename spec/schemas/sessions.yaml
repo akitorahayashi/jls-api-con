@@ -1,0 +1,184 @@
+# Session domain schemas. Owns session value types and enums.
+
+Prompt:
+  type: string
+  minLength: 1
+  description: Session prompt text. Non-empty after trimming (see docs/semantics.md).
+
+Title:
+  type: string
+  minLength: 1
+  maxLength: 255
+  description: Optional session title. Non-empty after trimming, at most 255 characters.
+
+StartingBranch:
+  type: string
+  pattern: '^\S+$'
+  description: Branch name. Non-empty and contains no whitespace.
+
+SessionName:
+  type: string
+  pattern: '^sessions/[^/]+$'
+  description: Session resource name; a single segment after "sessions/".
+
+AutomationMode:
+  type: string
+  description: >-
+    Known automation modes. Consumers tolerate unknown additive values as
+    forward-compatible (see docs/semantics.md).
+  enum:
+    - AUTOMATION_MODE_UNSPECIFIED
+    - AUTO_CREATE_PR
+
+State:
+  type: string
+  description: >-
+    Known session states. Consumers tolerate unknown additive values as
+    forward-compatible (see docs/semantics.md).
+  enum:
+    - STATE_UNSPECIFIED
+    - QUEUED
+    - PLANNING
+    - AWAITING_PLAN_APPROVAL
+    - AWAITING_USER_FEEDBACK
+    - IN_PROGRESS
+    - PAUSED
+    - FAILED
+    - COMPLETED
+
+GitHubRepoContext:
+  type: object
+  required: [startingBranch]
+  additionalProperties: true
+  properties:
+    startingBranch:
+      $ref: '#/StartingBranch'
+
+SourceContext:
+  type: object
+  required: [source]
+  additionalProperties: true
+  description: >-
+    Repo-backed context carries githubRepoContext. A repo-less session is
+    indicated by the ABSENCE of githubRepoContext when sourceContext is present,
+    or by the absence of sourceContext entirely on a session resource. See
+    docs/semantics.md.
+  properties:
+    source:
+      $ref: './sources.yaml#/SourceName'
+    githubRepoContext:
+      $ref: '#/GitHubRepoContext'
+    environmentVariablesEnabled:
+      type: boolean
+      description: Present in responses; omitted from request construction.
+
+PullRequest:
+  type: object
+  required: [url, title, description]
+  additionalProperties: true
+  properties:
+    url:
+      type: string
+    title:
+      type: string
+    description:
+      type: string
+    baseRef:
+      type: string
+    headRef:
+      type: string
+
+SessionOutput:
+  description: >-
+    A session output. Exactly one variant is present per item; both present is
+    rejected.
+  oneOf:
+    - type: object
+      required: [pullRequest]
+      additionalProperties: true
+      properties:
+        pullRequest:
+          $ref: '#/PullRequest'
+    - type: object
+      required: [changeSet]
+      additionalProperties: true
+      properties:
+        changeSet:
+          $ref: './activities.yaml#/ChangeSet'
+
+CreateSessionRequest:
+  type: object
+  required: [prompt]
+  additionalProperties: true
+  description: >-
+    Request body for sessions.create. Omit sourceContext to create a repo-less
+    session. requirePlanApproval and automationMode are input-only.
+  properties:
+    prompt:
+      $ref: '#/Prompt'
+    sourceContext:
+      $ref: '#/SourceContext'
+    title:
+      $ref: '#/Title'
+    requirePlanApproval:
+      type: boolean
+    automationMode:
+      $ref: '#/AutomationMode'
+
+SendMessageRequest:
+  type: object
+  required: [prompt]
+  additionalProperties: true
+  properties:
+    prompt:
+      type: string
+      minLength: 1
+
+Session:
+  type: object
+  required: [name, prompt]
+  additionalProperties: true
+  description: >-
+    A session resource returned by the API. sourceContext is absent for repo-less
+    sessions and may also be absent on historical responses.
+  properties:
+    name:
+      $ref: '#/SessionName'
+    id:
+      type: string
+    prompt:
+      $ref: '#/Prompt'
+    sourceContext:
+      $ref: '#/SourceContext'
+    title:
+      type: string
+    requirePlanApproval:
+      type: boolean
+    automationMode:
+      $ref: '#/AutomationMode'
+    state:
+      $ref: '#/State'
+    createTime:
+      type: string
+      format: date-time
+    updateTime:
+      type: string
+      format: date-time
+    url:
+      type: string
+    outputs:
+      type: array
+      items:
+        $ref: '#/SessionOutput'
+
+ListSessionsResponse:
+  type: object
+  required: [sessions]
+  additionalProperties: true
+  properties:
+    sessions:
+      type: array
+      items:
+        $ref: '#/Session'
+    nextPageToken:
+      type: string

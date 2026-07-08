@@ -1,0 +1,26 @@
+# AIP-193 structured error envelope.
+
+ErrorBody:
+  type: object
+  required: [code, message]
+  additionalProperties: true
+  properties:
+    code:
+      type: integer
+    message:
+      type: string
+    status:
+      type: string
+    details:
+      type: array
+      items:
+        type: object
+        additionalProperties: true
+
+Error:
+  type: object
+  required: [error]
+  additionalProperties: true
+  properties:
+    error:
+      $ref: '#/ErrorBody'

@@ -1,0 +1,17 @@
+{
+  "sessions": [
+    {
+      "name": "sessions/s1",
+      "id": "s1",
+      "prompt": "Fix issue in authentication flow",
+      "sourceContext": {
+        "source": "sources/github/o/r",
+        "githubRepoContext": {
+          "startingBranch": "main"
+        }
+      },
+      "state": "QUEUED"
+    }
+  ],
+  "nextPageToken": "next-session-token"
+}

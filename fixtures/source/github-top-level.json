@@ -1,0 +1,17 @@
+{
+  "name": "sources/github/o/r",
+  "id": "github/o/r",
+  "githubRepo": {
+    "owner": "o",
+    "repo": "r",
+    "isPrivate": true,
+    "defaultBranch": {
+      "displayName": "main"
+    },
+    "branches": [
+      {
+        "displayName": "main"
+      }
+    ]
+  }
+}

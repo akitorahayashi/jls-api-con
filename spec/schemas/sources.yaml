@@ -1,0 +1,78 @@
+# Source domain schemas. Owns SourceName, referenced by sessions and activities.
+
+SourceName:
+  type: string
+  pattern: '^sources/.+$'
+  description: >-
+    Source resource name. Starts with "sources/"; the remainder is multi-segment
+    (resource pattern sources/**), for example sources/github/owner/repo.
+
+GitHubBranch:
+  type: object
+  required: [displayName]
+  additionalProperties: true
+  properties:
+    displayName:
+      type: string
+
+GitHubRepo:
+  type: object
+  required: [owner, repo, isPrivate, defaultBranch]
+  additionalProperties: true
+  properties:
+    owner:
+      type: string
+    repo:
+      type: string
+    isPrivate:
+      type: boolean
+    defaultBranch:
+      $ref: '#/GitHubBranch'
+    branches:
+      type: array
+      items:
+        $ref: '#/GitHubBranch'
+
+SourceDetail:
+  type: object
+  required: [githubRepo]
+  additionalProperties: true
+  properties:
+    githubRepo:
+      $ref: '#/GitHubRepo'
+
+Source:
+  type: object
+  required: [name]
+  additionalProperties: true
+  description: >-
+    A connected source. The repository payload appears either nested under
+    "source" (documented shape) or at the top level as "githubRepo" (observed
+    live shape). Exactly one of the two carries the payload; both present is
+    rejected. See docs/semantics.md.
+  properties:
+    name:
+      $ref: '#/SourceName'
+    id:
+      type: string
+  oneOf:
+    - required: [source]
+      properties:
+        source:
+          $ref: '#/SourceDetail'
+    - required: [githubRepo]
+      properties:
+        githubRepo:
+          $ref: '#/GitHubRepo'
+
+ListSourcesResponse:
+  type: object
+  required: [sources]
+  additionalProperties: true
+  properties:
+    sources:
+      type: array
+      items:
+        $ref: '#/Source'
+    nextPageToken:
+      type: string

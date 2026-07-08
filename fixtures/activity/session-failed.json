@@ -1,0 +1,9 @@
+{
+  "name": "sessions/s1/activities/a7",
+  "id": "a7",
+  "createTime": "2025-01-01T00:01:10Z",
+  "originator": "system",
+  "sessionFailed": {
+    "reason": "Verification command exited non-zero after three attempts."
+  }
+}

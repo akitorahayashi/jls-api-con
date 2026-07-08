@@ -1,0 +1,8 @@
+{
+  "error": {
+    "code": 404,
+    "message": "Source not found",
+    "status": "NOT_FOUND",
+    "details": []
+  }
+}

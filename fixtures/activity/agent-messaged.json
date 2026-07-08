@@ -1,0 +1,9 @@
+{
+  "name": "sessions/s1/activities/a2",
+  "id": "a2",
+  "createTime": "2025-01-01T00:00:20Z",
+  "originator": "agent",
+  "agentMessaged": {
+    "agentMessage": "I have inspected the authentication module and identified the regression."
+  }
+}

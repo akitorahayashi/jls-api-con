@@ -1,0 +1,9 @@
+{
+  "name": "sessions/s1/activities/a4",
+  "id": "a4",
+  "createTime": "2025-01-01T00:00:40Z",
+  "originator": "user",
+  "planApproved": {
+    "planId": "p1"
+  }
+}

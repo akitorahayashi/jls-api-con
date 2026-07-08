@@ -1,0 +1,9 @@
+{
+  "name": "sessions/s1/activities/a3",
+  "id": "a3",
+  "createTime": "2025-01-01T00:00:30Z",
+  "originator": "user",
+  "userMessaged": {
+    "userMessage": "Please also add a regression test."
+  }
+}

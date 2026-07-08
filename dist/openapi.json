@@ -1,0 +1,1142 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Jules API",
+    "version": "0.1.0",
+    "description": "Wire contract for the Jules API REST v1alpha: resource schemas, enums, validation constraints, method surface, and the AIP-193 error envelope. This document is the single source of truth consumed by client repositories. Forward-compatibility obligations that the schema cannot express (tolerance of unknown enum values, unknown union variants, and unknown fields) are documented in docs/semantics.md.",
+    "contact": {
+      "name": "jls-api-con",
+      "url": "https://github.com/akitorahayashi/jls-api-con"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://jules.googleapis.com/v1alpha",
+      "description": "Jules API v1alpha"
+    }
+  ],
+  "security": [
+    {
+      "apiKey": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "sessions",
+      "description": "Session resources and lifecycle operations."
+    },
+    {
+      "name": "sources",
+      "description": "Connected input sources."
+    },
+    {
+      "name": "activities",
+      "description": "Session activity feed."
+    }
+  ],
+  "paths": {
+    "/sessions": {
+      "get": {
+        "operationId": "listSessions",
+        "tags": [
+          "sessions"
+        ],
+        "summary": "List sessions.",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Range 1..100; server default 30; values above 100 are coerced to 100.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 30
+            }
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListSessionsResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      },
+      "post": {
+        "operationId": "createSession",
+        "tags": [
+          "sessions"
+        ],
+        "summary": "Create a session.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSessionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Session"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/sessions/{session}": {
+      "get": {
+        "operationId": "getSession",
+        "tags": [
+          "sessions"
+        ],
+        "summary": "Get a session.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Session"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/sessions/{session}:sendMessage": {
+      "post": {
+        "operationId": "sendMessage",
+        "tags": [
+          "sessions"
+        ],
+        "summary": "Send a message to a session.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionPath"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendMessageRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Empty response."
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/sessions/{session}:approvePlan": {
+      "post": {
+        "operationId": "approvePlan",
+        "tags": [
+          "sessions"
+        ],
+        "summary": "Approve the current plan.",
+        "description": "No request body. Live requests send an explicit Content-Length: 0 header when no body is present.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Empty response."
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/sessions/{session}/activities": {
+      "get": {
+        "operationId": "listActivities",
+        "tags": [
+          "activities"
+        ],
+        "summary": "List activities of a session.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionPath"
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Range 1..100; server default 50; values above 100 are coerced to 100.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            }
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListActivitiesResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/sessions/{session}/activities/{activity}": {
+      "get": {
+        "operationId": "getActivity",
+        "tags": [
+          "activities"
+        ],
+        "summary": "Get an activity.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionPath"
+          },
+          {
+            "name": "activity",
+            "in": "path",
+            "required": true,
+            "description": "Activity id segment.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Activity"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/sources": {
+      "get": {
+        "operationId": "listSources",
+        "tags": [
+          "sources"
+        ],
+        "summary": "List sources.",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "AIP-160 filter expression; currently supports filtering by name, for example name=sources/source1 OR name=sources/source2.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Range 1..100; server default 30; values above 100 are coerced to 100.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 30
+            }
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListSourcesResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/sources/{source}": {
+      "get": {
+        "operationId": "getSource",
+        "tags": [
+          "sources"
+        ],
+        "summary": "Get a source.",
+        "description": "The source path parameter is multi-segment (resource pattern sources/**), for example github/owner/repo, and its slashes are not percent-encoded.",
+        "parameters": [
+          {
+            "name": "source",
+            "in": "path",
+            "required": true,
+            "description": "Multi-segment source id following sources/.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Source"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-goog-api-key"
+      }
+    },
+    "parameters": {
+      "SessionPath": {
+        "name": "session",
+        "in": "path",
+        "required": true,
+        "description": "Session id segment; the full resource name is sessions/{session}.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PageToken": {
+        "name": "pageToken",
+        "in": "query",
+        "description": "Opaque continuation token. Omitted by the server when no further pages exist.",
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "Error": {
+        "description": "AIP-193 structured error response.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Session": {
+        "type": "object",
+        "required": [
+          "name",
+          "prompt"
+        ],
+        "additionalProperties": true,
+        "description": "A session resource returned by the API. sourceContext is absent for repo-less sessions and may also be absent on historical responses.",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/SessionName"
+          },
+          "id": {
+            "type": "string"
+          },
+          "prompt": {
+            "$ref": "#/components/schemas/Prompt"
+          },
+          "sourceContext": {
+            "$ref": "#/components/schemas/SourceContext"
+          },
+          "title": {
+            "type": "string"
+          },
+          "requirePlanApproval": {
+            "type": "boolean"
+          },
+          "automationMode": {
+            "$ref": "#/components/schemas/AutomationMode"
+          },
+          "state": {
+            "$ref": "#/components/schemas/State"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "url": {
+            "type": "string"
+          },
+          "outputs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SessionOutput"
+            }
+          }
+        }
+      },
+      "ListSessionsResponse": {
+        "type": "object",
+        "required": [
+          "sessions"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "sessions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Session"
+            }
+          },
+          "nextPageToken": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateSessionRequest": {
+        "type": "object",
+        "required": [
+          "prompt"
+        ],
+        "additionalProperties": true,
+        "description": "Request body for sessions.create. Omit sourceContext to create a repo-less session. requirePlanApproval and automationMode are input-only.",
+        "properties": {
+          "prompt": {
+            "$ref": "#/components/schemas/Prompt"
+          },
+          "sourceContext": {
+            "$ref": "#/components/schemas/SourceContext"
+          },
+          "title": {
+            "$ref": "#/components/schemas/Title"
+          },
+          "requirePlanApproval": {
+            "type": "boolean"
+          },
+          "automationMode": {
+            "$ref": "#/components/schemas/AutomationMode"
+          }
+        }
+      },
+      "SendMessageRequest": {
+        "type": "object",
+        "required": [
+          "prompt"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "Source": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "additionalProperties": true,
+        "description": "A connected source. The repository payload appears either nested under \"source\" (documented shape) or at the top level as \"githubRepo\" (observed live shape). Exactly one of the two carries the payload; both present is rejected. See docs/semantics.md.",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/SourceName"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "oneOf": [
+          {
+            "required": [
+              "source"
+            ],
+            "properties": {
+              "source": {
+                "$ref": "#/components/schemas/SourceDetail"
+              }
+            }
+          },
+          {
+            "required": [
+              "githubRepo"
+            ],
+            "properties": {
+              "githubRepo": {
+                "$ref": "#/components/schemas/GitHubRepo"
+              }
+            }
+          }
+        ]
+      },
+      "ListSourcesResponse": {
+        "type": "object",
+        "required": [
+          "sources"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Source"
+            }
+          },
+          "nextPageToken": {
+            "type": "string"
+          }
+        }
+      },
+      "Activity": {
+        "type": "object",
+        "required": [
+          "name",
+          "originator"
+        ],
+        "additionalProperties": true,
+        "description": "An activity resource. Common fields plus exactly one event variant flattened into the object. Unknown future event variants are tolerated by consumers as forward-compatible (see docs/semantics.md).",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/ActivityName"
+          },
+          "id": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "originator": {
+            "type": "string",
+            "description": "Origin entity, for example user, agent, system."
+          },
+          "artifacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Artifact"
+            }
+          },
+          "agentMessaged": {
+            "$ref": "#/components/schemas/AgentMessaged"
+          },
+          "userMessaged": {
+            "$ref": "#/components/schemas/UserMessaged"
+          },
+          "planGenerated": {
+            "$ref": "#/components/schemas/PlanGenerated"
+          },
+          "planApproved": {
+            "$ref": "#/components/schemas/PlanApproved"
+          },
+          "progressUpdated": {
+            "$ref": "#/components/schemas/ProgressUpdated"
+          },
+          "sessionCompleted": {
+            "$ref": "#/components/schemas/SessionCompleted"
+          },
+          "sessionFailed": {
+            "$ref": "#/components/schemas/SessionFailed"
+          }
+        },
+        "oneOf": [
+          {
+            "required": [
+              "agentMessaged"
+            ]
+          },
+          {
+            "required": [
+              "userMessaged"
+            ]
+          },
+          {
+            "required": [
+              "planGenerated"
+            ]
+          },
+          {
+            "required": [
+              "planApproved"
+            ]
+          },
+          {
+            "required": [
+              "progressUpdated"
+            ]
+          },
+          {
+            "required": [
+              "sessionCompleted"
+            ]
+          },
+          {
+            "required": [
+              "sessionFailed"
+            ]
+          }
+        ]
+      },
+      "ListActivitiesResponse": {
+        "type": "object",
+        "required": [
+          "activities"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "activities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Activity"
+            }
+          },
+          "nextPageToken": {
+            "type": "string"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      },
+      "ErrorBody": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "SessionName": {
+        "type": "string",
+        "pattern": "^sessions/[^/]+$",
+        "description": "Session resource name; a single segment after \"sessions/\"."
+      },
+      "Prompt": {
+        "type": "string",
+        "minLength": 1,
+        "description": "Session prompt text. Non-empty after trimming (see docs/semantics.md)."
+      },
+      "SourceName": {
+        "type": "string",
+        "pattern": "^sources/.+$",
+        "description": "Source resource name. Starts with \"sources/\"; the remainder is multi-segment (resource pattern sources/**), for example sources/github/owner/repo."
+      },
+      "StartingBranch": {
+        "type": "string",
+        "pattern": "^\\S+$",
+        "description": "Branch name. Non-empty and contains no whitespace."
+      },
+      "GitHubRepoContext": {
+        "type": "object",
+        "required": [
+          "startingBranch"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "startingBranch": {
+            "$ref": "#/components/schemas/StartingBranch"
+          }
+        }
+      },
+      "SourceContext": {
+        "type": "object",
+        "required": [
+          "source"
+        ],
+        "additionalProperties": true,
+        "description": "Repo-backed context carries githubRepoContext. A repo-less session is indicated by the ABSENCE of githubRepoContext when sourceContext is present, or by the absence of sourceContext entirely on a session resource. See docs/semantics.md.",
+        "properties": {
+          "source": {
+            "$ref": "#/components/schemas/SourceName"
+          },
+          "githubRepoContext": {
+            "$ref": "#/components/schemas/GitHubRepoContext"
+          },
+          "environmentVariablesEnabled": {
+            "type": "boolean",
+            "description": "Present in responses; omitted from request construction."
+          }
+        }
+      },
+      "AutomationMode": {
+        "type": "string",
+        "description": "Known automation modes. Consumers tolerate unknown additive values as forward-compatible (see docs/semantics.md).",
+        "enum": [
+          "AUTOMATION_MODE_UNSPECIFIED",
+          "AUTO_CREATE_PR"
+        ]
+      },
+      "State": {
+        "type": "string",
+        "description": "Known session states. Consumers tolerate unknown additive values as forward-compatible (see docs/semantics.md).",
+        "enum": [
+          "STATE_UNSPECIFIED",
+          "QUEUED",
+          "PLANNING",
+          "AWAITING_PLAN_APPROVAL",
+          "AWAITING_USER_FEEDBACK",
+          "IN_PROGRESS",
+          "PAUSED",
+          "FAILED",
+          "COMPLETED"
+        ]
+      },
+      "PullRequest": {
+        "type": "object",
+        "required": [
+          "url",
+          "title",
+          "description"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "baseRef": {
+            "type": "string"
+          },
+          "headRef": {
+            "type": "string"
+          }
+        }
+      },
+      "GitPatch": {
+        "type": "object",
+        "required": [
+          "unidiffPatch"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "unidiffPatch": {
+            "type": "string"
+          },
+          "baseCommitId": {
+            "type": "string"
+          },
+          "suggestedCommitMessage": {
+            "type": "string"
+          }
+        }
+      },
+      "ChangeSet": {
+        "type": "object",
+        "required": [
+          "gitPatch"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "source": {
+            "$ref": "#/components/schemas/SourceName"
+          },
+          "gitPatch": {
+            "$ref": "#/components/schemas/GitPatch"
+          }
+        }
+      },
+      "SessionOutput": {
+        "description": "A session output. Exactly one variant is present per item; both present is rejected.",
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "pullRequest"
+            ],
+            "additionalProperties": true,
+            "properties": {
+              "pullRequest": {
+                "$ref": "#/components/schemas/PullRequest"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "changeSet"
+            ],
+            "additionalProperties": true,
+            "properties": {
+              "changeSet": {
+                "$ref": "#/components/schemas/ChangeSet"
+              }
+            }
+          }
+        ]
+      },
+      "Title": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 255,
+        "description": "Optional session title. Non-empty after trimming, at most 255 characters."
+      },
+      "ActivityName": {
+        "type": "string",
+        "pattern": "^sessions/[^/]+/activities/[^/]+$",
+        "description": "Activity resource name of the form sessions/{session}/activities/{activity}."
+      },
+      "Media": {
+        "type": "object",
+        "required": [
+          "data",
+          "mimeType"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "data": {
+            "type": "string",
+            "format": "byte",
+            "description": "Base64-encoded payload."
+          },
+          "mimeType": {
+            "type": "string"
+          }
+        }
+      },
+      "BashOutput": {
+        "type": "object",
+        "required": [
+          "command",
+          "output",
+          "exitCode"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "command": {
+            "type": "string"
+          },
+          "output": {
+            "type": "string",
+            "description": "Combined stdout and stderr."
+          },
+          "exitCode": {
+            "type": "integer"
+          }
+        }
+      },
+      "Artifact": {
+        "description": "An activity artifact. Exactly one variant is present per item.",
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "changeSet"
+            ],
+            "additionalProperties": true,
+            "properties": {
+              "changeSet": {
+                "$ref": "#/components/schemas/ChangeSet"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "media"
+            ],
+            "additionalProperties": true,
+            "properties": {
+              "media": {
+                "$ref": "#/components/schemas/Media"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "bashOutput"
+            ],
+            "additionalProperties": true,
+            "properties": {
+              "bashOutput": {
+                "$ref": "#/components/schemas/BashOutput"
+              }
+            }
+          }
+        ]
+      },
+      "AgentMessaged": {
+        "type": "object",
+        "required": [
+          "agentMessage"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "agentMessage": {
+            "type": "string"
+          }
+        }
+      },
+      "UserMessaged": {
+        "type": "object",
+        "required": [
+          "userMessage"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "userMessage": {
+            "type": "string"
+          }
+        }
+      },
+      "PlanStep": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "0-based index in plan.steps."
+          }
+        }
+      },
+      "Plan": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlanStep"
+            }
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PlanGenerated": {
+        "type": "object",
+        "required": [
+          "plan"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "plan": {
+            "$ref": "#/components/schemas/Plan"
+          }
+        }
+      },
+      "PlanApproved": {
+        "type": "object",
+        "required": [
+          "planId"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "planId": {
+            "type": "string"
+          }
+        }
+      },
+      "ProgressUpdated": {
+        "type": "object",
+        "required": [
+          "title",
+          "description"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "SessionCompleted": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "Carries no fields."
+      },
+      "SessionFailed": {
+        "type": "object",
+        "required": [
+          "reason"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "GitHubBranch": {
+        "type": "object",
+        "required": [
+          "displayName"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "displayName": {
+            "type": "string"
+          }
+        }
+      },
+      "GitHubRepo": {
+        "type": "object",
+        "required": [
+          "owner",
+          "repo",
+          "isPrivate",
+          "defaultBranch"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "owner": {
+            "type": "string"
+          },
+          "repo": {
+            "type": "string"
+          },
+          "isPrivate": {
+            "type": "boolean"
+          },
+          "defaultBranch": {
+            "$ref": "#/components/schemas/GitHubBranch"
+          },
+          "branches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GitHubBranch"
+            }
+          }
+        }
+      },
+      "SourceDetail": {
+        "type": "object",
+        "required": [
+          "githubRepo"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "githubRepo": {
+            "$ref": "#/components/schemas/GitHubRepo"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "jls-api-con",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Single-source-of-truth wire contract for the Jules API REST v1alpha.",
+  "type": "module",
+  "scripts": {
+    "bundle": "redocly bundle spec/openapi.yaml -o dist/openapi.json",
+    "lint": "spectral lint spec/openapi.yaml --fail-severity=error",
+    "validate:fixtures": "node scripts/validate-fixtures.mjs",
+    "check": "npm run lint && npm run bundle && npm run validate:fixtures"
+  },
+  "devDependencies": {
+    "@redocly/cli": "^1.34.0",
+    "@stoplight/spectral-cli": "^6.14.0",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
+  }
+}

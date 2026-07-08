@@ -1,0 +1,30 @@
+{
+  "name": "sessions/abc123",
+  "id": "abc123",
+  "prompt": "Fix the bug",
+  "sourceContext": {
+    "source": "sources/github/o/r",
+    "environmentVariablesEnabled": true,
+    "githubRepoContext": {
+      "startingBranch": "main"
+    }
+  },
+  "title": "Fix the bug",
+  "requirePlanApproval": true,
+  "automationMode": "AUTO_CREATE_PR",
+  "createTime": "2025-01-01T00:00:00Z",
+  "updateTime": "2025-01-01T01:00:00Z",
+  "state": "COMPLETED",
+  "url": "https://jules.google.com/sessions/abc123",
+  "outputs": [
+    {
+      "pullRequest": {
+        "url": "https://github.com/o/r/pull/1",
+        "title": "Fix bug",
+        "description": "Applies fix",
+        "baseRef": "main",
+        "headRef": "fix-bug"
+      }
+    }
+  ]
+}

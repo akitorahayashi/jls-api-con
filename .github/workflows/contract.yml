@@ -1,0 +1,50 @@
+name: contract
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Bundle and verify dist is regenerated
+        run: |
+          npm run bundle
+          git diff --exit-status dist/openapi.json
+      - name: Validate fixtures
+        run: npm run validate:fixtures
+
+  breaking:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run bundle
+      - name: Install oasdiff
+        run: curl -fsSL https://raw.githubusercontent.com/oasdiff/oasdiff/main/install.sh | sudo sh
+      - name: Breaking-change check against base
+        run: |
+          base_sha='${{ github.event.pull_request.base.sha }}'
+          if git cat-file -e "$base_sha:dist/openapi.json" 2>/dev/null; then
+            git show "$base_sha:dist/openapi.json" > "$RUNNER_TEMP/base-openapi.json"
+            oasdiff breaking "$RUNNER_TEMP/base-openapi.json" dist/openapi.json --fail-on ERR
+          else
+            echo "No baseline dist/openapi.json in base commit; skipping breaking-change check."
+          fi

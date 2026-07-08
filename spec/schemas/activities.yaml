@@ -1,0 +1,220 @@
+# Activity domain schemas. Owns ChangeSet and GitPatch, referenced by sessions.
+
+ActivityName:
+  type: string
+  pattern: '^sessions/[^/]+/activities/[^/]+$'
+  description: Activity resource name of the form sessions/{session}/activities/{activity}.
+
+AgentMessaged:
+  type: object
+  required: [agentMessage]
+  additionalProperties: true
+  properties:
+    agentMessage:
+      type: string
+
+UserMessaged:
+  type: object
+  required: [userMessage]
+  additionalProperties: true
+  properties:
+    userMessage:
+      type: string
+
+PlanStep:
+  type: object
+  additionalProperties: true
+  properties:
+    id:
+      type: string
+    title:
+      type: string
+    description:
+      type: string
+    index:
+      type: integer
+      minimum: 0
+      description: 0-based index in plan.steps.
+
+Plan:
+  type: object
+  additionalProperties: true
+  properties:
+    id:
+      type: string
+    steps:
+      type: array
+      items:
+        $ref: '#/PlanStep'
+    createTime:
+      type: string
+      format: date-time
+
+PlanGenerated:
+  type: object
+  required: [plan]
+  additionalProperties: true
+  properties:
+    plan:
+      $ref: '#/Plan'
+
+PlanApproved:
+  type: object
+  required: [planId]
+  additionalProperties: true
+  properties:
+    planId:
+      type: string
+
+ProgressUpdated:
+  type: object
+  required: [title, description]
+  additionalProperties: true
+  properties:
+    title:
+      type: string
+    description:
+      type: string
+
+SessionCompleted:
+  type: object
+  additionalProperties: true
+  description: Carries no fields.
+
+SessionFailed:
+  type: object
+  required: [reason]
+  additionalProperties: true
+  properties:
+    reason:
+      type: string
+
+GitPatch:
+  type: object
+  required: [unidiffPatch]
+  additionalProperties: true
+  properties:
+    unidiffPatch:
+      type: string
+    baseCommitId:
+      type: string
+    suggestedCommitMessage:
+      type: string
+
+ChangeSet:
+  type: object
+  required: [gitPatch]
+  additionalProperties: true
+  properties:
+    source:
+      $ref: './sources.yaml#/SourceName'
+    gitPatch:
+      $ref: '#/GitPatch'
+
+Media:
+  type: object
+  required: [data, mimeType]
+  additionalProperties: true
+  properties:
+    data:
+      type: string
+      format: byte
+      description: Base64-encoded payload.
+    mimeType:
+      type: string
+
+BashOutput:
+  type: object
+  required: [command, output, exitCode]
+  additionalProperties: true
+  properties:
+    command:
+      type: string
+    output:
+      type: string
+      description: Combined stdout and stderr.
+    exitCode:
+      type: integer
+
+Artifact:
+  description: >-
+    An activity artifact. Exactly one variant is present per item.
+  oneOf:
+    - type: object
+      required: [changeSet]
+      additionalProperties: true
+      properties:
+        changeSet:
+          $ref: '#/ChangeSet'
+    - type: object
+      required: [media]
+      additionalProperties: true
+      properties:
+        media:
+          $ref: '#/Media'
+    - type: object
+      required: [bashOutput]
+      additionalProperties: true
+      properties:
+        bashOutput:
+          $ref: '#/BashOutput'
+
+Activity:
+  type: object
+  required: [name, originator]
+  additionalProperties: true
+  description: >-
+    An activity resource. Common fields plus exactly one event variant flattened
+    into the object. Unknown future event variants are tolerated by consumers as
+    forward-compatible (see docs/semantics.md).
+  properties:
+    name:
+      $ref: '#/ActivityName'
+    id:
+      type: string
+    description:
+      type: string
+    createTime:
+      type: string
+      format: date-time
+    originator:
+      type: string
+      description: Origin entity, for example user, agent, system.
+    artifacts:
+      type: array
+      items:
+        $ref: '#/Artifact'
+    agentMessaged:
+      $ref: '#/AgentMessaged'
+    userMessaged:
+      $ref: '#/UserMessaged'
+    planGenerated:
+      $ref: '#/PlanGenerated'
+    planApproved:
+      $ref: '#/PlanApproved'
+    progressUpdated:
+      $ref: '#/ProgressUpdated'
+    sessionCompleted:
+      $ref: '#/SessionCompleted'
+    sessionFailed:
+      $ref: '#/SessionFailed'
+  oneOf:
+    - required: [agentMessaged]
+    - required: [userMessaged]
+    - required: [planGenerated]
+    - required: [planApproved]
+    - required: [progressUpdated]
+    - required: [sessionCompleted]
+    - required: [sessionFailed]
+
+ListActivitiesResponse:
+  type: object
+  required: [activities]
+  additionalProperties: true
+  properties:
+    activities:
+      type: array
+      items:
+        $ref: '#/Activity'
+    nextPageToken:
+      type: string

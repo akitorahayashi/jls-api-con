@@ -1,0 +1,17 @@
+{
+  "name": "sessions/live-2",
+  "id": "live-2",
+  "prompt": "Create a file",
+  "state": "COMPLETED",
+  "outputs": [
+    {
+      "changeSet": {
+        "source": "sources/github/",
+        "gitPatch": {
+          "unidiffPatch": "diff --git a/e2e-repoless-output-contract.txt b/e2e-repoless-output-contract.txt\nnew file mode 100644\nindex 0000000..17618e9\n--- /dev/null\n+++ b/e2e-repoless-output-contract.txt\n@@ -0,0 +1 @@\n+e2e\n",
+          "suggestedCommitMessage": "Create e2e-repoless-output-contract.txt"
+        }
+      }
+    }
+  ]
+}
