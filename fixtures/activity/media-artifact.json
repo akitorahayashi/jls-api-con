@@ -1,0 +1,17 @@
+{
+  "name": "sessions/s1/activities/a8",
+  "id": "a8",
+  "createTime": "2025-01-01T00:01:20Z",
+  "originator": "agent",
+  "artifacts": [
+    {
+      "media": {
+        "data": "aGVsbG8gd29ybGQ=",
+        "mimeType": "image/png"
+      }
+    }
+  ],
+  "agentMessaged": {
+    "agentMessage": "Attached a screenshot of the rendered output."
+  }
+}

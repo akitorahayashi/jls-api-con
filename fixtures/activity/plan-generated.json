@@ -1,0 +1,40 @@
+{
+  "name": "sessions/s1/activities/a1",
+  "id": "a1",
+  "description": "Generated a plan",
+  "createTime": "2025-01-01T00:00:10Z",
+  "originator": "agent",
+  "artifacts": [
+    {
+      "changeSet": {
+        "source": "sources/github/o/r",
+        "gitPatch": {
+          "unidiffPatch": "@@ -1 +1 @@\n-old\n+new\n",
+          "baseCommitId": "abc123",
+          "suggestedCommitMessage": "Apply authentication fix"
+        }
+      }
+    },
+    {
+      "bashOutput": {
+        "command": "echo ok",
+        "output": "ok",
+        "exitCode": 0
+      }
+    }
+  ],
+  "planGenerated": {
+    "plan": {
+      "id": "p1",
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Inspect authentication code",
+          "description": "Identify the regression source",
+          "index": 0
+        }
+      ],
+      "createTime": "2025-01-01T00:00:09Z"
+    }
+  }
+}

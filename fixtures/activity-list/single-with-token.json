@@ -1,0 +1,16 @@
+{
+  "activities": [
+    {
+      "name": "sessions/s1/activities/a1",
+      "id": "a1",
+      "description": "Generated a plan",
+      "createTime": "2025-01-01T00:00:10Z",
+      "originator": "agent",
+      "progressUpdated": {
+        "title": "Planning",
+        "description": "Generated implementation plan"
+      }
+    }
+  ],
+  "nextPageToken": "next-activity-token"
+}

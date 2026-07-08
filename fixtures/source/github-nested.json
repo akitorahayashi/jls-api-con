@@ -1,0 +1,22 @@
+{
+  "name": "sources/github/o/r",
+  "id": "src-1",
+  "source": {
+    "githubRepo": {
+      "owner": "o",
+      "repo": "r",
+      "isPrivate": true,
+      "defaultBranch": {
+        "displayName": "main"
+      },
+      "branches": [
+        {
+          "displayName": "main"
+        },
+        {
+          "displayName": "feature/auth-fix"
+        }
+      ]
+    }
+  }
+}

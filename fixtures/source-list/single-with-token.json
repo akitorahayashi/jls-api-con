@@ -1,0 +1,24 @@
+{
+  "sources": [
+    {
+      "name": "sources/github/o/r",
+      "id": "src-1",
+      "source": {
+        "githubRepo": {
+          "owner": "o",
+          "repo": "r",
+          "isPrivate": true,
+          "defaultBranch": {
+            "displayName": "main"
+          },
+          "branches": [
+            {
+              "displayName": "main"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "nextPageToken": "next-source-token"
+}

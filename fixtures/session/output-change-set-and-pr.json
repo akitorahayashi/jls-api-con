@@ -1,0 +1,32 @@
+{
+  "name": "sessions/live-1",
+  "id": "live-1",
+  "prompt": "Fix bug",
+  "sourceContext": {
+    "source": "sources/github/o/r",
+    "githubRepoContext": {
+      "startingBranch": "main"
+    }
+  },
+  "state": "COMPLETED",
+  "outputs": [
+    {
+      "changeSet": {
+        "source": "sources/github/o/r",
+        "gitPatch": {
+          "unidiffPatch": "@@ -1 +1 @@\n-old\n+new\n",
+          "baseCommitId": "abc123"
+        }
+      }
+    },
+    {
+      "pullRequest": {
+        "url": "https://github.com/o/r/pull/1",
+        "title": "Fix bug",
+        "description": "Applies fix",
+        "baseRef": "main",
+        "headRef": "fix-bug"
+      }
+    }
+  ]
+}

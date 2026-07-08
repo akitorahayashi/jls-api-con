@@ -1,0 +1,27 @@
+{
+  "name": "sessions/s1",
+  "id": "s1",
+  "prompt": "Fix issue in authentication flow",
+  "sourceContext": {
+    "source": "sources/github/o/r",
+    "githubRepoContext": {
+      "startingBranch": "main"
+    }
+  },
+  "title": "Auth fix",
+  "requirePlanApproval": true,
+  "automationMode": "AUTO_CREATE_PR",
+  "createTime": "2025-01-01T00:00:00Z",
+  "updateTime": "2025-01-01T00:10:00Z",
+  "state": "IN_PROGRESS",
+  "url": "https://jules.google.com/sessions/s1",
+  "outputs": [
+    {
+      "pullRequest": {
+        "url": "https://github.com/o/r/pull/1",
+        "title": "Fix authentication flow",
+        "description": "Applies a targeted authentication fix"
+      }
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'All requests'",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": []
+  }
+}

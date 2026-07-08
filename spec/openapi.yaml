@@ -1,0 +1,275 @@
+openapi: 3.1.0
+info:
+  title: Jules API
+  version: 0.1.0
+  description: >-
+    Wire contract for the Jules API REST v1alpha: resource schemas, enums,
+    validation constraints, method surface, and the AIP-193 error envelope.
+    This document is the single source of truth consumed by client repositories.
+    Forward-compatibility obligations that the schema cannot express (tolerance
+    of unknown enum values, unknown union variants, and unknown fields) are
+    documented in docs/semantics.md.
+  contact:
+    name: jls-api-con
+    url: https://github.com/akitorahayashi/jls-api-con
+servers:
+  - url: https://jules.googleapis.com/v1alpha
+    description: Jules API v1alpha
+security:
+  - apiKey: []
+tags:
+  - name: sessions
+    description: Session resources and lifecycle operations.
+  - name: sources
+    description: Connected input sources.
+  - name: activities
+    description: Session activity feed.
+paths:
+  /sessions:
+    get:
+      operationId: listSessions
+      tags: [sessions]
+      summary: List sessions.
+      parameters:
+        - name: pageSize
+          in: query
+          description: Range 1..100; server default 30; values above 100 are coerced to 100.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 30
+        - $ref: '#/components/parameters/PageToken'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListSessionsResponse'
+        default:
+          $ref: '#/components/responses/Error'
+    post:
+      operationId: createSession
+      tags: [sessions]
+      summary: Create a session.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSessionRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        default:
+          $ref: '#/components/responses/Error'
+  /sessions/{session}:
+    get:
+      operationId: getSession
+      tags: [sessions]
+      summary: Get a session.
+      parameters:
+        - $ref: '#/components/parameters/SessionPath'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        default:
+          $ref: '#/components/responses/Error'
+  '/sessions/{session}:sendMessage':
+    post:
+      operationId: sendMessage
+      tags: [sessions]
+      summary: Send a message to a session.
+      parameters:
+        - $ref: '#/components/parameters/SessionPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendMessageRequest'
+      responses:
+        '200':
+          description: Empty response.
+        default:
+          $ref: '#/components/responses/Error'
+  '/sessions/{session}:approvePlan':
+    post:
+      operationId: approvePlan
+      tags: [sessions]
+      summary: Approve the current plan.
+      description: >-
+        No request body. Live requests send an explicit Content-Length: 0 header
+        when no body is present.
+      parameters:
+        - $ref: '#/components/parameters/SessionPath'
+      responses:
+        '200':
+          description: Empty response.
+        default:
+          $ref: '#/components/responses/Error'
+  /sessions/{session}/activities:
+    get:
+      operationId: listActivities
+      tags: [activities]
+      summary: List activities of a session.
+      parameters:
+        - $ref: '#/components/parameters/SessionPath'
+        - name: pageSize
+          in: query
+          description: Range 1..100; server default 50; values above 100 are coerced to 100.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+        - $ref: '#/components/parameters/PageToken'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListActivitiesResponse'
+        default:
+          $ref: '#/components/responses/Error'
+  /sessions/{session}/activities/{activity}:
+    get:
+      operationId: getActivity
+      tags: [activities]
+      summary: Get an activity.
+      parameters:
+        - $ref: '#/components/parameters/SessionPath'
+        - name: activity
+          in: path
+          required: true
+          description: Activity id segment.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Activity'
+        default:
+          $ref: '#/components/responses/Error'
+  /sources:
+    get:
+      operationId: listSources
+      tags: [sources]
+      summary: List sources.
+      parameters:
+        - name: filter
+          in: query
+          description: >-
+            AIP-160 filter expression; currently supports filtering by name, for
+            example name=sources/source1 OR name=sources/source2.
+          schema:
+            type: string
+        - name: pageSize
+          in: query
+          description: Range 1..100; server default 30; values above 100 are coerced to 100.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 30
+        - $ref: '#/components/parameters/PageToken'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListSourcesResponse'
+        default:
+          $ref: '#/components/responses/Error'
+  /sources/{source}:
+    get:
+      operationId: getSource
+      tags: [sources]
+      summary: Get a source.
+      description: >-
+        The full resource name is sources/{source}. The source path parameter is
+        multi-segment (resource pattern sources/**), for example
+        github/owner/repo. Its slashes are literal path separators and MUST NOT
+        be percent-encoded: the request path is /v1alpha/sources/github/owner/repo,
+        never /v1alpha/sources/github%2Fowner%2Frepo. A generated client that
+        URL-encodes path parameters must special-case this operation and build the
+        path from the full source name without encoding the slashes (see
+        docs/semantics.md).
+      parameters:
+        - name: source
+          in: path
+          required: true
+          description: >-
+            Multi-segment source id following sources/, with literal, unencoded
+            slashes.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Source'
+        default:
+          $ref: '#/components/responses/Error'
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: x-goog-api-key
+  parameters:
+    SessionPath:
+      name: session
+      in: path
+      required: true
+      description: Session id segment; the full resource name is sessions/{session}.
+      schema:
+        type: string
+    PageToken:
+      name: pageToken
+      in: query
+      description: Opaque continuation token. Omitted by the server when no further pages exist.
+      schema:
+        type: string
+  responses:
+    Error:
+      description: AIP-193 structured error response.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Session:
+      $ref: './schemas/sessions.yaml#/Session'
+    ListSessionsResponse:
+      $ref: './schemas/sessions.yaml#/ListSessionsResponse'
+    CreateSessionRequest:
+      $ref: './schemas/sessions.yaml#/CreateSessionRequest'
+    SendMessageRequest:
+      $ref: './schemas/sessions.yaml#/SendMessageRequest'
+    Source:
+      $ref: './schemas/sources.yaml#/Source'
+    ListSourcesResponse:
+      $ref: './schemas/sources.yaml#/ListSourcesResponse'
+    Activity:
+      $ref: './schemas/activities.yaml#/Activity'
+    ListActivitiesResponse:
+      $ref: './schemas/activities.yaml#/ListActivitiesResponse'
+    Error:
+      $ref: './schemas/errors.yaml#/Error'

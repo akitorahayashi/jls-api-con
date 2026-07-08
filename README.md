@@ -18,7 +18,7 @@ spec/
 fixtures/              Real wire-shape JSON, one directory per schema
 docs/semantics.md      Behavior the schema cannot express (authority for meaning)
 dist/openapi.json      Bundled single-file contract (generated, committed)
-scripts/               Fixture validation
+tests/                 Fixture-conformance test (bun test)
 ```
 
 OpenAPI 3.1 schemas are JSON Schema 2020-12, so the same schema nodes drive both
@@ -41,23 +41,30 @@ code generation in consumers and fixture validation here.
 ## Local checks
 
 ```
-npm install
-npm run check      # lint + bundle + validate fixtures
+bun install
+bun run check      # biome + typecheck + bundle + bun test
+bun run fix        # apply Biome formatting and safe fixes
 ```
 
-Individual steps: `npm run lint`, `npm run bundle`, `npm run validate:fixtures`.
+Individual steps: `bun run typecheck`, `bun run bundle`, `bun test`. Biome
+(`biome.json`) formats and lints JSON and TypeScript; the YAML spec and
+generated `dist/` are outside its scope.
+
+`bun install` installs a husky pre-commit hook (`.husky/pre-commit`) that runs
+`lint-staged` (Biome on staged files), regenerates `dist/openapi.json`, and
+stages it. The committed bundle therefore never drifts from source; CI's
+staleness check is the backstop.
 
 ## Fixtures
 
 Each subdirectory of `fixtures/` maps to exactly one component schema
 (`fixtures/session/` to `Session`, `fixtures/session-list/` to
 `ListSessionsResponse`, and so on; the mapping lives in
-`scripts/validate-fixtures.mjs`). Every fixture must be a real wire shape and
+`tests/fixtures.test.ts`). Every fixture must be a real wire shape and
 must validate against its schema. Adding a directory without a mapping, an
 empty directory, or a non-validating fixture fails the check.
 
 ## Continuous integration
 
-CI runs lint, bundle, and fixture validation, confirms `dist/openapi.json` is
-regenerated from source, and runs an oasdiff breaking-change gate on pull
-requests. Additive changes pass; breaking changes are surfaced.
+CI runs `bun run check` (Biome, typecheck, bundle, fixture validation) and
+confirms `dist/openapi.json` is regenerated from source.
